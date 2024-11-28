@@ -13,15 +13,19 @@ public class Turma {
     private Integer id;
 
     @Column
-    private int ano;
+    private Integer ano;
 
     @Column
-    private int semestre;
+    private Integer semestre;
 
     @ManyToOne
     @JoinColumn(name = "curso_id", referencedColumnName = "id")
     @JsonIgnoreProperties("turmas")
     private Curso curso;
+
+    @OneToMany
+    @JoinColumn(name = "turma_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private List<Matricula> matriculas;
 
     public Integer getId() {
         return id;
@@ -31,19 +35,19 @@ public class Turma {
         this.id = id;
     }
 
-    public int getAno() {
+    public Integer getAno() {
         return ano;
     }
 
-    public void setAno(int ano) {
+    public void setAno(Integer ano) {
         this.ano = ano;
     }
 
-    public int getSemestre() {
+    public Integer getSemestre() {
         return semestre;
     }
 
-    public void setSemestre(int semestre) {
+    public void setSemestre(Integer semestre) {
         this.semestre = semestre;
     }
 
@@ -53,5 +57,13 @@ public class Turma {
 
     public void setCurso(Curso curso) {
         this.curso = curso;
+    }
+
+    public List<Matricula> getMatriculas() {
+        return matriculas;
+    }
+
+    public void setMatriculas(List<Matricula> matriculas) {
+        this.matriculas = matriculas;
     }
 }

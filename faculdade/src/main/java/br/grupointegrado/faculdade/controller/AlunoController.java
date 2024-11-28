@@ -2,12 +2,16 @@ package br.grupointegrado.faculdade.controller;
 
 import br.grupointegrado.faculdade.dto.AlunoRequestDTO;
 import br.grupointegrado.faculdade.model.Aluno;
+import br.grupointegrado.faculdade.model.Matricula;
+import br.grupointegrado.faculdade.model.Nota;
 import br.grupointegrado.faculdade.repository.AlunoRepository;
+import br.grupointegrado.faculdade.repository.NotaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/alunos")
@@ -15,6 +19,9 @@ public class AlunoController {
 
     @Autowired
     private AlunoRepository repository;
+
+    @Autowired
+    private NotaRepository notaRepository;
 
     @GetMapping
     public ResponseEntity<List<Aluno>> findAll() {
@@ -60,5 +67,38 @@ public class AlunoController {
 
         this.repository.delete(aluno);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/relatorio")
+    public ResponseEntity<Map<String, Object>> findNotasById(@PathVariable Integer id) {
+        Optional<Aluno> aluno = this.repository.findById(id);
+
+        if (aluno.isPresent()) {
+            Map<String, Object> response = new HashMap<>();
+
+            response.put("nome", aluno.get().getNome());
+
+            List<Map<String, Object>> notasList = new ArrayList<>();
+
+            for (Matricula matricula : aluno.get().getMatriculas()) {
+                List<Nota> notas = notaRepository.findByMatriculaId(matricula.getId());
+
+                for (Nota nota : notas) {
+
+                    Map<String, Object> notaData = new HashMap<>();
+                    notaData.put("disciplina", nota.getDisciplina().getNome());  // Nome da disciplina
+                    notaData.put("nota", nota.getNota());  // Nota obtida
+                    notaData.put("data_lancamento", nota.getData_lancamento());  // Data de lançamento
+
+                    notasList.add(notaData);
+                }
+            }
+
+            response.put("notas", notasList);
+
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }

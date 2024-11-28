@@ -1,10 +1,7 @@
 package br.grupointegrado.faculdade.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
 
-import java.util.List;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "disciplinas")
@@ -21,12 +18,10 @@ public class Disciplina {
 
     @ManyToOne
     @JoinColumn(name = "curso_id", referencedColumnName = "id")
-    @JsonIgnore
     private Curso curso;
 
     @ManyToOne
     @JoinColumn(name = "professor_id", referencedColumnName = "id")
-    @JsonIgnore
     private Professor professor;
 
     public Integer getId() {

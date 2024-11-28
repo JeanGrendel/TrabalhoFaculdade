@@ -3,14 +3,18 @@ package br.grupointegrado.faculdade.controller;
 import br.grupointegrado.faculdade.dto.DisciplinaRequestDTO;
 import br.grupointegrado.faculdade.dto.TurmaRequestDTO;
 import br.grupointegrado.faculdade.model.Disciplina;
+import br.grupointegrado.faculdade.model.Nota;
 import br.grupointegrado.faculdade.model.Turma;
 import br.grupointegrado.faculdade.repository.DisciplinaRepository;
+import br.grupointegrado.faculdade.repository.NotaRepository;
 import br.grupointegrado.faculdade.repository.TurmaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/disciplinas")
@@ -18,6 +22,9 @@ public class DisciplinaController {
 
     @Autowired
     private DisciplinaRepository repository;
+
+    @Autowired
+    private NotaRepository notaRepository;
 
     @GetMapping
     public ResponseEntity<List<Disciplina>> findAll() {
@@ -59,5 +66,22 @@ public class DisciplinaController {
 
         this.repository.delete(disciplina);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/notas")
+    public ResponseEntity<List<Nota>> findNotasByDisciplinaId(@PathVariable Integer id) {
+        Optional<Disciplina> disciplina = this.repository.findById(id);
+
+        if (disciplina.isPresent()) {
+            List<Nota> notas = notaRepository.findByDisciplinaId(id);
+
+            if (notas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            }
+
+            return ResponseEntity.ok(notas);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }

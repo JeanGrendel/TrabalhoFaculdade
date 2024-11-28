@@ -3,6 +3,7 @@ package br.grupointegrado.faculdade.model;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "alunos")
@@ -23,6 +24,10 @@ public class Aluno {
 
     @Column
     private Date data_nascimento;
+
+    @OneToMany
+    @JoinColumn(name = "aluno_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private List<Matricula> matriculas;
 
     public Integer getId() {
         return id;
@@ -62,5 +67,13 @@ public class Aluno {
 
     public void setData_nascimento(Date data_nascimento) {
         this.data_nascimento = data_nascimento;
+    }
+
+    public List<Matricula> getMatriculas() {
+        return matriculas;
+    }
+
+    public void setMatriculas(List<Matricula> matriculas) {
+        this.matriculas = matriculas;
     }
 }
